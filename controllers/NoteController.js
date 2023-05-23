@@ -21,7 +21,7 @@ export const getNote = async (req, res) => {
 }
 
 export const createNote = async (req, res) => {
-    const { startTime, endTime, milk, nursed, formula, pee, poop, description } = req.body;
+    const { startTime, endTime, milk, nursed, formula, pee, poop, description, left, right } = req.body;
     const { dayId } = req.params;
     console.log(dayId)
     console.log(req)
@@ -37,6 +37,8 @@ export const createNote = async (req, res) => {
                             milk: milk,
                             formula: formula,
                             nursed: nursed,
+                            left: left,
+                            right: right,
                             pee: pee,
                             poop: poop,
                             description: description,
@@ -54,14 +56,14 @@ export const createNote = async (req, res) => {
 }
 
 export const updateNote = async (req, res) => {
-    const { dateId, noteId } = req.params;
-    const { startTime, endTime, pee, poop, description, formula,  } = req.body;
+    const { dayId, noteId } = req.params;
+    const { startTime, endTime, pee, poop, description, nursed, formula, milk, left, right  } = req.body;
     if (!mongoose.Types.ObjectId.isValid(noteId)) return res.status(404).send(`No note with id: ${noteId}`);
-    let token = req.headers.authorization;
-    if(validateUser(token)){
+    // let token = req.headers.authorization;
+    // if(validateUser(token)){
         try {
             await DayModel.findOneAndUpdate(
-                { "_id": dateId, "notes._id": noteId },
+                { "_id": dayId, "notes._id": noteId },
                 {
                     $set:{
                         "notes.$.description": description,
@@ -70,6 +72,8 @@ export const updateNote = async (req, res) => {
                         "notes.$.pee": pee,
                         "notes.$.poop": poop,
                         "notes.$.nursed": nursed,
+                        "notes.$.right": right,
+                        "notes.$.left": left,
                         "notes.$.milk": milk,
                         "notes.$.formula": formula,
                     }
@@ -79,112 +83,27 @@ export const updateNote = async (req, res) => {
         } catch (error) {
             res.status(400).json({ message: error.message });
         }
-    } else {
-        res.status(400).json('Invalid');
-    }
+    // } else {
+    //     res.status(400).json('Invalid');
+    // }
 } 
 
 export const deleteNote = async (req, res) => {
-    const { dateId, noteId } = req.params;
+    const { dayId, noteId } = req.params;
     if (!mongoose.Types.ObjectId.isValid(noteId)) return res.status(404).send(`No note with id: ${noteId}`);
-    let token = req.headers.authorization;
-    if(validateAdmin(token)){
+    // let token = req.headers.authorization;
+    // if(validateAdmin(token)){
         try {
             await DayModel.findOneAndUpdate(
-                { _id: dateId },
-                { 
-                    $set: { lastUpdate: currentDay },
-                    $pull: { 'notes': { _id: noteId } } 
-                },
+                { _id: dayId },
+                {$pull: { "notes": { _id: noteId } }},
                 { multi: true }
             )
             res.json("Note Deleted");
         } catch (error) {
             res.status(400).json({ message: error.message });
         }
-    } else {
-        res.status(400).json('Invalid');
-    }
-}
-
-export const deleteImage = async (req, res) => {
-    const { dateId, noteId } = req.params;
-    if (!mongoose.Types.ObjectId.isValid(noteId)) return res.status(404).send(`No Note with id: ${noteId}`);
-    let token = req.headers.authorization;
-    if(validateUser(token)){
-        try { 
-            await DayModel.findOneAndUpdate(
-                { _id: dateId, 'notes._id': noteId },
-                {   
-                    $set:{
-                        lastUpdate: currentDay,
-                        "notes.$.images": images,
-                        "notes.$.lastUpdate": currentDay,
-                    }
-                }
-            )
-            res.json("Image Deleted");
-        } catch (error) {
-            res.status(400).json({ message: error.message });
-        }
-    }
-    }
-
-export const createNoteComment = async (req, res) => {
-    const { dateId, noteId } = req.params;
-    const { comment, author } = req.body;
-    if (!mongoose.Types.ObjectId.isValid(noteId)) return res.status(404).send(`No note with id: ${noteId}`);
-    let token = req.headers.authorization;
-    if(validateUser(token)){
-        try {
-            await DayModel.findOneAndUpdate(
-                { "_id": dateId, "notes._id": noteId },
-                {
-                    $set: {
-                        lastUpdate: currentDay,
-                    },
-                    $push:{
-                        "notes.$.comments": {
-                            comment, 
-                            day: currentDay.toLocaleString('en-US', { timeZone: 'America/New_York' }), 
-                            author
-                        }
-                    }
-                },
-            );
-            res.json("Comment created!");
-        } catch (error) {
-            res.status(400).json({ message: error.message });
-        }
-    } else {
-        res.status(400).json('Invalid');
-    }
-}
-
-export const deleteNoteComment = async (req, res) => {
-    const { dateId, noteId, commentId } = req.params;  
-    if (!mongoose.Types.ObjectId.isValid(noteId)) return res.status(404).send(`No note with id: ${noteId}`);
-    let token = req.headers.authorization;
-    if(validateUser(token)){
-        try {
-            await DayModel.findOneAndUpdate(
-                { "_id": dateId, "notes._id": noteId },
-                {
-                    $set: {
-                        lastUpdate: currentDay,
-                    },
-                    $pull:{
-                        "notes.$.comments": {
-                            _id: commentId
-                        }
-                    }
-                },
-            );
-            res.json("Comment Deleted!");
-        } catch (error) {
-            res.status(400).json({ message: error.message });
-        }
-    } else {
-        res.status(400).json('Invalid');
-    }
+    // } else {
+    //     res.status(400).json('Invalid');
+    // }
 }

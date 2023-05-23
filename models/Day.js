@@ -5,6 +5,8 @@ const NoteSchema = new mongoose.Schema({
     startTime: String,
     endTime: String,
     nursed: Boolean,
+    left: Number,
+    right: Number,
     milk: Number,
     formula: Number,
     pee: Boolean,
