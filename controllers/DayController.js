@@ -5,7 +5,7 @@ import { CronJob } from 'cron';
 export const getDays = async (req, res) => { 
     try {
         const days = await DayModel.find(); 
-        res.status(200).json(days);
+        res.status(200).json(days.reverse());
     } catch (error) {
         res.status(404).json({ message: error.message });
     }
