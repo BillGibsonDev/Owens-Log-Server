@@ -21,7 +21,7 @@ export const getNote = async (req, res) => {
 }
 
 export const createNote = async (req, res) => {
-    const { startTime, endTime, milk, nursed, formula, pee, poop, description, left, right } = req.body;
+    const { startTime, endTime, milk, nursed, formula, drank, pee, poop, description, left, right } = req.body;
     const { dayId } = req.params;
     console.log(dayId)
     console.log(req)
@@ -41,6 +41,8 @@ export const createNote = async (req, res) => {
                             right: right,
                             pee: pee,
                             poop: poop,
+                            drank: drank,
+                            mixed: mixed,
                             description: description,
                         }
                     }
@@ -57,7 +59,7 @@ export const createNote = async (req, res) => {
 
 export const updateNote = async (req, res) => {
     const { dayId, noteId } = req.params;
-    const { startTime, endTime, pee, poop, description, nursed, formula, milk, left, right  } = req.body;
+    const { startTime, endTime, pee, poop, description, drank, mixed, nursed, formula, milk, left, right  } = req.body;
     if (!mongoose.Types.ObjectId.isValid(noteId)) return res.status(404).send(`No note with id: ${noteId}`);
     // let token = req.headers.authorization;
     // if(validateUser(token)){
@@ -71,6 +73,8 @@ export const updateNote = async (req, res) => {
                         "notes.$.endTime": endTime,
                         "notes.$.pee": pee,
                         "notes.$.poop": poop,
+                        "notes.$.drank": drank,
+                        "notes.$.mixed": mixed,
                         "notes.$.nursed": nursed,
                         "notes.$.right": right,
                         "notes.$.left": left,

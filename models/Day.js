@@ -9,6 +9,8 @@ const NoteSchema = new mongoose.Schema({
     right: Number,
     milk: Number,
     formula: Number,
+    drank: Number,
+    mixed: Boolean,
     pee: Boolean,
     poop: Boolean,
     description: String,
