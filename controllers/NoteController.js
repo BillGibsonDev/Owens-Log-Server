@@ -21,10 +21,8 @@ export const getNote = async (req, res) => {
 }
 
 export const createNote = async (req, res) => {
-    const { startTime, endTime, milk, nursed, formula, drank, pee, poop, description, left, right } = req.body;
+    const { startTime, endTime, milk, nursed, mixed, formula, drank, pee, poop, description, left, right } = req.body;
     const { dayId } = req.params;
-    console.log(dayId)
-    console.log(req)
     // let token = req.headers.authorization;
     // if(validateUser(token)){
         try {
