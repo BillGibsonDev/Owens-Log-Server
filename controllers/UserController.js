@@ -8,27 +8,22 @@ import { createTokens, validateAdmin } from "../JWT.js";
 const router = express.Router();
 
 export const createUser = async (req, res) => {
-  const { username, password, role, userRole } = req.body;
-  let token = req.headers.authorization;
-  if(validateAdmin(token)){
-    bcrypt.hash(password, 10).then((hash) => {
-      UserModel.create({
-        username: username,
-        password: hash,
-        role: userRole,
-      })
-      .then(() => {
-        res.json("USER REGISTERED");
-      })
-      .catch((err) => {
-        if (err) {
-          res.status(400).json({ error: err });
-        }
-      });
+  const { username, password } = req.body;
+  bcrypt.hash(password, 10).then((hash) => {
+    UserModel.create({
+      username: username,
+      password: hash,
+    })
+    .then(() => {
+      res.status(200);
+      
+    })
+    .catch((err) => {
+      if (err) {
+        res.status(400).json({ error: err });
+      }
     });
-  } else {
-    res.status(400).json('Invalid');
-  }
+  });
 };
 
 export const loginUser = async (req, res) =>{
