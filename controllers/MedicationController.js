@@ -1,11 +1,11 @@
 import mongoose from 'mongoose';
-import { DayModel } from "../models/Day.js";
+import { UserModel } from "../models/Day.js";
 import { validateAdmin, validateUser } from '../JWT.js';
 
 export const getMedication = async (req, res) => {
     const { dateId, medicationId } = req.params;
     try {
-        const medication = await DayModel.findOne({ 
+        const medication = await UserModel.findOne({ 
             medications: {
                 $elemMatch: { _id: medicationId}}},
             { 
@@ -22,11 +22,11 @@ export const getMedication = async (req, res) => {
 
 export const createMedication = async (req, res) => {
     const { startTime, endTime, milk, nursed, mixed, formula, drank, pee, poop, description, left, right } = req.body;
-    const { dayId } = req.params;
+    const { userId } = req.params;
     // let token = req.headers.authorization;
     // if(validateUser(token)){
         try {
-            await DayModel.findOneAndUpdate({ '_id': dayId },
+            await UserModel.findOneAndUpdate({ '_id': userId },
                 {
                     $push: {
                         'medications': {  
@@ -56,14 +56,14 @@ export const createMedication = async (req, res) => {
 }
 
 export const updateMedication = async (req, res) => {
-    const { dayId, medicationId } = req.params;
+    const { userId, medicationId } = req.params;
     const { startTime, endTime, pee, poop, description, drank, mixed, nursed, formula, milk, left, right  } = req.body;
     if (!mongoose.Types.ObjectId.isValid(medicationId)) return res.status(404).send(`No medication with id: ${medicationId}`);
     // let token = req.headers.authorization;
     // if(validateUser(token)){
         try {
-            await DayModel.findOneAndUpdate(
-                { "_id": dayId, "medications._id": medicationId },
+            await UserModel.findOneAndUpdate(
+                { "_id": userId, "medications._id": medicationId },
                 {
                     $set:{
                         "medications.$.description": description,
@@ -91,13 +91,13 @@ export const updateMedication = async (req, res) => {
 } 
 
 export const deleteMedication = async (req, res) => {
-    const { dayId, medicationId } = req.params;
+    const { userId, medicationId } = req.params;
     if (!mongoose.Types.ObjectId.isValid(medicationId)) return res.status(404).send(`No medication with id: ${medicationId}`);
     // let token = req.headers.authorization;
     // if(validateAdmin(token)){
         try {
-            await DayModel.findOneAndUpdate(
-                { _id: dayId },
+            await UserModel.findOneAndUpdate(
+                { _id: userId },
                 {$pull: { "medications": { _id: medicationId } }},
                 { multi: true }
             )

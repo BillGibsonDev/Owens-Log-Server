@@ -44,9 +44,9 @@ const DataSchema = new mongoose.Schema({
     user: String,
     feedings: [{ type: FeedingSchema, ref: 'feedingsS' }],
     changes: [{ type: ChangesSchema, ref: 'changes' }],
-    nursing: [{ type: NursingSchema, ref: 'nursings' }],
-    medication: [{ type: PumpingSchema, ref: 'medications' }],
-    medication: [{ type: MedicationSchema, ref: 'medications'}]
+    nursings: [{ type: NursingSchema, ref: 'nursings' }],
+    pumpings: [{ type: PumpingSchema, ref: 'pumpings' }],
+    medications: [{ type: MedicationSchema, ref: 'medications'}]
 });
 
 // parent

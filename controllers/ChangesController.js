@@ -1,11 +1,11 @@
 import mongoose from 'mongoose';
-import { DayModel } from "../models/Data.js";
+import { UserModel } from "../models/Data.js";
 import { validateAdmin, validateUser } from '../JWT.js';
 
 export const getChanges = async (req, res) => {
     const { dateId, changeId } = req.params;
     try {
-        const change = await DayModel.findOne({ 
+        const change = await UserModel.findOne({ 
             changes: {
                 $elemMatch: { _id: changeId}}},
             { 
@@ -22,11 +22,11 @@ export const getChanges = async (req, res) => {
 
 export const createChange = async (req, res) => {
     const { time, pee, poop } = req.body;
-    const { dayId } = req.params;
+    const { userId } = req.params;
     // let token = req.headers.authorization;
     // if(validateUser(token)){
         try {
-            await DayModel.findOneAndUpdate({ '_id': dayId },
+            await UserModel.findOneAndUpdate({ '_id': userId },
                 {
                     $push: {
                         'changes': {  
@@ -47,14 +47,14 @@ export const createChange = async (req, res) => {
 }
 
 export const updateChange = async (req, res) => {
-    const { dayId, changeId } = req.params;
+    const { userId, changeId } = req.params;
     const { time, pee, poop } = req.body;
     if (!mongoose.Types.ObjectId.isValid(changeId)) return res.status(404).send(`No change with id: ${changeId}`);
     // let token = req.headers.authorization;
     // if(validateUser(token)){
         try {
-            await DayModel.findOneAndUpdate(
-                { "_id": dayId, "changes._id": changeId },
+            await UserModel.findOneAndUpdate(
+                { "_id": userId, "changes._id": changeId },
                 {
                     $set:{
                         "changes.$.time": time,
@@ -73,13 +73,13 @@ export const updateChange = async (req, res) => {
 } 
 
 export const deleteChange = async (req, res) => {
-    const { dayId, changeId } = req.params;
+    const { userId, changeId } = req.params;
     if (!mongoose.Types.ObjectId.isValid(changeId)) return res.status(404).send(`No change with id: ${changeId}`);
     // let token = req.headers.authorization;
     // if(validateAdmin(token)){
         try {
-            await DayModel.findOneAndUpdate(
-                { _id: dayId },
+            await UserModel.findOneAndUpdate(
+                { _id: userId },
                 { $pull: { "changes": { _id: changeId } }},
                 { multi: true }
             )

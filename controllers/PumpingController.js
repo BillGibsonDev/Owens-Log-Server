@@ -1,11 +1,11 @@
 import mongoose from 'mongoose';
-import { DayModel } from "../models/Data.js";
+import { UserModel } from "../models/Data.js";
 import { validateAdmin, validateUser } from '../JWT.js';
 
 export const getPumping = async (req, res) => {
     const { dateId, pumpingId } = req.params;
     try {
-        const pumping = await DayModel.findOne({ 
+        const pumping = await UserModel.findOne({ 
             pumpings: {
                 $elemMatch: { _id: pumpingId}}},
             { 
@@ -22,11 +22,11 @@ export const getPumping = async (req, res) => {
 
 export const createPumping = async (req, res) => {
     const { time, leftAmount, rightAmount } = req.body;
-    const { dayId } = req.params;
+    const { userId } = req.params;
     // let token = req.headers.authorization;
     // if(validateUser(token)){
         try {
-            await DayModel.findOneAndUpdate({ '_id': dayId },
+            await UserModel.findOneAndUpdate({ '_id': userId },
                 {
                     $push: {
                         'pumpings': {  
@@ -47,14 +47,14 @@ export const createPumping = async (req, res) => {
 }
 
 export const updatePumping = async (req, res) => {
-    const { dayId, pumpingId } = req.params;
+    const { userId, pumpingId } = req.params;
     const { time, leftAmount, rightAmount  } = req.body;
     if (!mongoose.Types.ObjectId.isValid(pumpingId)) return res.status(404).send(`No pumping with id: ${pumpingId}`);
     // let token = req.headers.authorization;
     // if(validateUser(token)){
         try {
-            await DayModel.findOneAndUpdate(
-                { "_id": dayId, "pumpings._id": pumpingId },
+            await UserModel.findOneAndUpdate(
+                { "_id": userId, "pumpings._id": pumpingId },
                 {
                     $set:{
                         "pumpings.$.time": time,
@@ -73,13 +73,13 @@ export const updatePumping = async (req, res) => {
 } 
 
 export const deletePumping = async (req, res) => {
-    const { dayId, pumpingId } = req.params;
+    const { userId, pumpingId } = req.params;
     if (!mongoose.Types.ObjectId.isValid(pumpingId)) return res.status(404).send(`No pumping with id: ${pumpingId}`);
     // let token = req.headers.authorization;
     // if(validateAdmin(token)){
         try {
-            await DayModel.findOneAndUpdate(
-                { _id: dayId },
+            await UserModel.findOneAndUpdate(
+                { _id: userId },
                 { $pull: { "pumpings": { _id: pumpingId } }},
                 { multi: true }
             )

@@ -11,16 +11,16 @@ const router = express.Router();
 dotenv.config();
 
 // read
-router.get(`/${process.env.NODE_ENV_GET_DAY_URL}/:dayId/notes/:noteId`, getNote);
+router.get(`/${process.env.NODE_ENV_GET_DAY_URL}/:userId/notes/:noteId`, getNote);
 
 // update
-router.post(`/${process.env.NODE_ENV_UPDATE_NOTE_URL}/:dayId/update/:noteId`, updateNote);
+router.post(`/${process.env.NODE_ENV_UPDATE_NOTE_URL}/:userId/update/:noteId`, updateNote);
 
 // create
-router.post(`/${process.env.NODE_ENV_ADD_NOTE_URL}/:dayId/notes`, createNote);
+router.post(`/${process.env.NODE_ENV_ADD_NOTE_URL}/:userId/notes`, createNote);
 
 // delete
-router.post(`/${process.env.NODE_ENV_DELETE_NOTE_URL}/:dayId/delete/:noteId`, deleteNote);
+router.post(`/${process.env.NODE_ENV_DELETE_NOTE_URL}/:userId/delete/:noteId`, deleteNote);
 
 // users
 router.post(`/owens-log/login`, loginUser);
