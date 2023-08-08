@@ -41,13 +41,19 @@ const MedicationSchema = new mongoose.Schema({
 
 // parent
 const DataSchema = new mongoose.Schema({
-    user: String,
-    feedings: [{ type: FeedingSchema, ref: 'feedingsS' }],
+    feedings: [{ type: FeedingSchema, ref: 'feedings' }],
     changes: [{ type: ChangesSchema, ref: 'changes' }],
-    nursings: [{ type: NursingSchema, ref: 'nursings' }],
+    nursings: [NursingSchema],
     pumpings: [{ type: PumpingSchema, ref: 'pumpings' }],
     medications: [{ type: MedicationSchema, ref: 'medications'}]
 });
+
+const PartnerSchema = new mongoose.Schema({
+    partner: {  
+        type: String,
+        unique: true,
+    }
+})
 
 // parent
 const UserSchema = new mongoose.Schema({
@@ -60,10 +66,11 @@ const UserSchema = new mongoose.Schema({
         type: String,
         allowNull: false,
     },
+    token: String,
     lastLogin: String,
-    partners: [{ userID: String, }],
-    baby: { BabySchema },
-    data: { DataSchema }
+    partners: [{ type: PartnerSchema, ref: 'partners' }],
+    baby: { type: BabySchema, ref: 'baby' },
+    data: { type: DataSchema, ref: 'data' }
 })
 
 export const UserModel = mongoose.model("User", UserSchema)

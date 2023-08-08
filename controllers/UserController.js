@@ -8,30 +8,48 @@ import { createTokens, validateAdmin } from "../JWT.js";
 const router = express.Router();
 
 export const createUser = async (req, res) => {
-  const { username, password } = req.body;
-  bcrypt.hash(password, 10).then((hash) => {
-    UserModel.create({
-      username: username,
-      password: hash,
-    })
-    .then(() => {
-      res.status(200);
-      
-    })
-    .catch((err) => {
-      if (err) {
-        res.status(400).json({ error: err });
-      }
+  const { email, password } = req.body;
+  const user = await UserModel.findOne({email: email });
+  if(user){
+    res.status(400).json('User already exists')
+  } else {
+    bcrypt.hash(password, 10).then((hash) => {
+      UserModel.create({
+        email: email,
+        password: hash,
+        data: {
+          nursings: [],
+          pumpings: [],
+          feedings: [],
+          medications: [],
+          changes: [],
+        },
+        partners: [],
+        baby: {},
+      })
+      .then(() => {
+        res.status(200).json('User created');
+        
+      })
+      .catch((err) => {
+        if (err) {
+          res.status(400).json({ error: err });
+        }
+      });
     });
-  });
+  }
 };
 
 export const loginUser = async (req, res) =>{
-  const { username, password } = req.body;
-  const currentDay = new Day();
-  const user = await UserModel.findOneAndUpdate({username: username },{lastLogin: currentDay.toLocaleString('en-US', { timeZone: 'America/New_York' })});
+  const { email, password } = req.body;
+  const currentDay = new Date();
+  const user = await UserModel.findOne({email: email });
   const accessToken = createTokens(user);
-  const updateUser = await UserModel.findOneAndUpdate({ username: username }, {token: accessToken}, { new: true })
+  const updateUser = await UserModel.findOneAndUpdate(
+    { email: email }, 
+    { token: accessToken, lastLogin: currentDay }, 
+    { new: true }
+  )
   if (!user) res.status(400).json({ error: "Wrong Username or Password!" });
   const userPassword = user.password;
   try {
@@ -41,7 +59,7 @@ export const loginUser = async (req, res) =>{
           .status(400)
           .json({ error: "Wrong Username or Password!" });
       } else {
-        res.send(accessToken);
+        res.send({token: accessToken, id: user._id});
       }
     });
   } catch (error) {
@@ -51,7 +69,7 @@ export const loginUser = async (req, res) =>{
 
 // not tested \0/
 export const updateUser = async (req, res) =>{
-  const { username, password, newpassword} = req.body;
+  const { email, password, newpassword} = req.body;
   const userPassword = user.password;
   bcrypt.compare(password, userPassword).then((match) => {
     if (!match) {
@@ -59,7 +77,7 @@ export const updateUser = async (req, res) =>{
         .status(400)
         .json({ error: "Wrong Username or Password!" });
     } else {
-      UserModel.findOneAndUpdate({username: username },{password: newpassword});
+      UserModel.findOneAndUpdate({email: email },{password: newpassword});
       res.json("User Updated");
     }
   });

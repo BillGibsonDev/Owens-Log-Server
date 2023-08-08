@@ -21,16 +21,6 @@ export const getAllFeedingData = async (req, res) => {
     }
 }
 
-export const getAllNursingData = async (req, res) => { 
-    const { userId } = req.params;
-    try {
-        const user = await UserModel.findById(userId); 
-        res.status(200).json(user.data.nursings);
-    } catch (error) {
-        res.status(404).json({ message: error.message });
-    }
-}
-
 export const getAllPumpingData = async (req, res) => { 
     const { userId } = req.params;
     try {
@@ -56,6 +46,16 @@ export const getAllMedicationData = async (req, res) => {
     try {
         const user = await UserModel.findById(userId); 
         res.status(200).json(user.data.medications);
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+    }
+}
+
+export const getAllNursingData = async (req, res) => { 
+    const { userId } = req.params;
+    try {
+        const user = await UserModel.findById(userId); 
+        res.status(200).json(user.data.nursings);
     } catch (error) {
         res.status(404).json({ message: error.message });
     }

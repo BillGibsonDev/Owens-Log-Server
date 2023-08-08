@@ -4,9 +4,8 @@ const { sign, verify } = pkg;
 export const createTokens = (user) => {
   const accessToken = sign(
     { 
-      username: user.username, 
-      id: user._id, 
-      role: user.role 
+      email: user.email, 
+      id: user._id,
     },
     `${process.env.NODE_ENV_JWT_SECRET}`,
     { expiresIn: '12h' }
@@ -20,7 +19,7 @@ export const validateToken = (req, res, next) => {
     const validToken = verify(token, `${process.env.NODE_ENV_JWT_SECRET}`);
     if (validToken) {
       req.authenticated = true;
-      res.json(`${validToken.role}`);
+      res.status(200).json('token is valid')
       return next();
     } else {
       res.json('Token Not Valid');
@@ -33,9 +32,7 @@ export const validateToken = (req, res, next) => {
 
 export const validateUser = ( token ) => {
   const validToken = verify(token, `${process.env.NODE_ENV_JWT_SECRET}`);
-  if(validToken.role === process.env.NODE_ENV_ADMIN_SECRET ){
-    return true;
-  } else if (validToken.role === process.env.NODE_ENV_USER_SECRET) {
+  if(validToken){
     return true;
   } else {
     return false;
@@ -55,7 +52,7 @@ export const getUserFromToken = (token) => {
   try {
     const validToken = verify(token, `${process.env.NODE_ENV_JWT_SECRET}`);
     if (validToken) {
-      return `${validToken.username}`;
+      return `${validToken.email}`;
     } else {
       console.log('Token Not Valid');
     }
