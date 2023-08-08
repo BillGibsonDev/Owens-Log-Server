@@ -2,6 +2,35 @@ import mongoose from 'mongoose';
 import { UserModel } from "../models/User.js";
 import { validateUser } from '../JWT.js';
 
+export const getAllData = async (req, res) => { 
+    const { userId } = req.params;
+    try {
+        const user = await UserModel.findById(userId); 
+        res.status(200).json(user.data);
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+    }
+}
+
+export const getEventData = async (req, res) => { 
+    const { userId, event } = req.params;
+    try {
+        const user = await UserModel.findById(userId); 
+
+        let eventData;
+
+        if( event === 'Nursing'){ eventData = user.data.nursings };
+        if( event === 'Pumping'){ eventData = user.data.pumpings };
+        if( event === 'Feeding'){ eventData = user.data.feedings };
+        if( event === 'Change'){ eventData = user.data.changes };
+        if( event === 'Medication'){ eventData = user.data.medications };
+
+        res.status(200).json(eventData);
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+    }
+}
+
 export const createEvent = async (req, res) => {
     const { data } = req.body;
     const { userId } = req.params;
