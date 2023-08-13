@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import cookieParser from "cookie-parser";
 import { UserModel } from "../models/User.js";
-import { createTokens, validateAdmin } from "../JWT.js";
+import { createTokens } from "../JWT.js";
 
 const router = express.Router();
 

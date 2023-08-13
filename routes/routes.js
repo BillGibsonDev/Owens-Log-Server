@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 
 import { createUser, loginUser, updateUser } from '../controllers/UserController.js';
 import { getAllData, getEventData, createEvent, updateEvent, deleteEvent } from '../controllers/EventController.js.js';
-import { validateToken } from '../JWT.js';
+import { validateToken, validateUser } from '../JWT.js';
 
 const router = express.Router();
 dotenv.config();
